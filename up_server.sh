@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# ============================================================
-# Messenger Server Deployer
-# https://github.com/Mak-Open-Communication/Messenger-Server
-# ============================================================
-
-# === Constants ===
+# Constants
 REQUIRED_PROGRAMS=(git python3)
 REPO_URL="https://github.com/Mak-Open-Communication/Messenger-Server.git"
 REPO_BRANCH="main"
@@ -19,20 +14,20 @@ ENV_FILE="$SERVER_DIR/.env"
 ENV_EXAMPLE_FILE="$SERVER_DIR/.env.example"
 DEPS_HASH_FILE="$VENV_DIR/.deps_hash"
 
-# === Functions ===
+# Logger functions
 log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [INFO] $1"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [INFO] $1"
 }
 
 log_warn() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [WARN] $1"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [WARNING] $1"
 }
 
 log_error() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [ERROR] $1" >&2
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [ERROR] $1" >&2
 }
 
-# === Parse arguments ===
+# Parse arguments
 AUTO_UPDATE=true
 
 for arg in "$@"; do
@@ -43,7 +38,7 @@ for arg in "$@"; do
     esac
 done
 
-# === Check required programs ===
+# Check required programs
 for prog in "${REQUIRED_PROGRAMS[@]}"; do
     if ! command -v "$prog" &>/dev/null; then
         log_error "'$prog' is not installed. Please install it and try again."
@@ -51,7 +46,7 @@ for prog in "${REQUIRED_PROGRAMS[@]}"; do
     fi
 done
 
-# === Check Python version ===
+# Check Python version
 PYTHON_MAJOR_VERSION=$(python3 -c "import sys; print(sys.version_info.major)")
 
 if [ "$PYTHON_MAJOR_VERSION" -lt "$MIN_PYTHON_MAJOR_VERSION" ]; then
@@ -61,7 +56,7 @@ fi
 
 log "Python version: $(python3 --version)"
 
-# === Clone server if not exists ===
+# Clone server if not exists
 if [ ! -d "$SERVER_DIR/.git" ]; then
     log "Server not found. Cloning from $REPO_URL ..."
     if ! git clone -b "$REPO_BRANCH" "$REPO_URL" "$SERVER_DIR"; then
@@ -71,7 +66,7 @@ if [ ! -d "$SERVER_DIR/.git" ]; then
     log "Repository cloned successfully."
 fi
 
-# === Check for updates ===
+# Check for updates
 log "Checking for updates..."
 
 if ! git -C "$SERVER_DIR" fetch origin "$REPO_BRANCH" 2>/dev/null; then
@@ -97,7 +92,7 @@ else
     fi
 fi
 
-# === Create venv if not exists ===
+# Create venv if not exists
 if [ ! -f "$VENV_DIR/bin/activate" ]; then
     log "Creating virtual environment..."
     if ! python3 -m venv "$VENV_DIR"; then
@@ -107,7 +102,7 @@ if [ ! -f "$VENV_DIR/bin/activate" ]; then
     log "Virtual environment created."
 fi
 
-# === Check .env ===
+# Check .env
 if [ ! -f "$ENV_FILE" ]; then
     if [ -f "$ENV_EXAMPLE_FILE" ]; then
         cp "$ENV_EXAMPLE_FILE" "$ENV_FILE"
@@ -123,7 +118,7 @@ if [ ! -f "$ENV_FILE" ]; then
     exit 1
 fi
 
-# === Install dependencies if needed ===
+# Install dependencies if needed
 CURRENT_REQ_HASH=""
 if [ -f "$REQUIREMENTS_FILE" ]; then
     CURRENT_REQ_HASH=$(md5sum "$REQUIREMENTS_FILE" | awk '{print $1}')
@@ -144,7 +139,7 @@ if [ "$CURRENT_REQ_HASH" != "$INSTALLED_REQ_HASH" ]; then
     log "Dependencies installed successfully."
 fi
 
-# === Start server ===
+# Start server
 log "Starting server..."
 cd "$SERVER_DIR" || exit 1
 source "$VENV_DIR/bin/activate"
