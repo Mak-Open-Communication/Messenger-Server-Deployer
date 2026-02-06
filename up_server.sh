@@ -16,15 +16,15 @@ DEPS_HASH_FILE="$VENV_DIR/.deps_hash"
 
 # Logger functions
 log() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') [INFO] $1"
+    echo "Launcher: $(date '+%H:%M:%S') [INFO] $1"
 }
 
 log_warn() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') [WARNING] $1"
+    echo "Launcher: $(date '+%H:%M:%S') [WARNING] $1"
 }
 
 log_error() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') [ERROR] $1" >&2
+    echo "Launcher: $(date '+%H:%M:%S') [ERROR] $1" >&2
 }
 
 # Parse arguments
@@ -106,6 +106,8 @@ fi
 if [ ! -f "$ENV_FILE" ]; then
     if [ -f "$ENV_EXAMPLE_FILE" ]; then
         cp "$ENV_EXAMPLE_FILE" "$ENV_FILE"
+
+        echo ""
         log_warn "==========================================="
         log_warn " .env file was not found!"
         log_warn " A copy has been created from .env.example."
@@ -130,17 +132,22 @@ if [ -f "$DEPS_HASH_FILE" ]; then
 fi
 
 if [ "$CURRENT_REQ_HASH" != "$INSTALLED_REQ_HASH" ]; then
-    log "Installing dependencies..."
+    log "Installing dependencies:"
     if ! "$VENV_DIR/bin/pip" install -r "$REQUIREMENTS_FILE"; then
         log_error "Failed to install dependencies."
         exit 1
     fi
+
+    echo ""
     echo "$CURRENT_REQ_HASH" > "$DEPS_HASH_FILE"
     log "Dependencies installed successfully."
 fi
 
 # Start server
-log "Starting server..."
+log "Starting server:"
+# echo "----------------------------------------------"
+echo ""
+
 cd "$SERVER_DIR" || exit 1
 source "$VENV_DIR/bin/activate"
 python3 -m src.main
