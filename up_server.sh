@@ -108,12 +108,12 @@ if [ ! -f "$ENV_FILE" ]; then
         cp "$ENV_EXAMPLE_FILE" "$ENV_FILE"
 
         echo ""
-        log_warn "==========================================="
+        log_warn "================================================="
         log_warn " .env file was not found!"
         log_warn " A copy has been created from .env.example."
         log_warn " Please configure: $ENV_FILE"
         log_warn " Then run this script again."
-        log_warn "==========================================="
+        log_warn "================================================="
     else
         log_error ".env.example not found in $SERVER_DIR. Cannot create .env."
     fi
