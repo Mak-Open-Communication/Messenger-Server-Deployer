@@ -16,15 +16,15 @@ DEPS_HASH_FILE="$VENV_DIR/.deps_hash"
 
 # Logger functions
 log() {
-    echo "Launcher: $(date '+%H:%M:%S') [INFO] $1"
+    echo "Launcher: $(date '+%H:%M:%S') (Info) $1"
 }
 
 log_warn() {
-    echo "Launcher: $(date '+%H:%M:%S') [WARNING] $1"
+    echo "Launcher: $(date '+%H:%M:%S') (Warning) $1"
 }
 
 log_error() {
-    echo "Launcher: $(date '+%H:%M:%S') [ERROR] $1" >&2
+    echo "Launcher: $(date '+%H:%M:%S') (Error) $1" >&2
 }
 
 # Parse arguments
